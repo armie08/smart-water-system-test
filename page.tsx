@@ -1,100 +1,195 @@
+"use client"
+
+import type React from "react"
+
+import { useState } from "react"
+import { useRouter } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
-import { ArrowRight } from "lucide-react"
+import { ArrowLeft, Eye, EyeOff } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { useToast } from "@/components/ui/use-toast"
 
-export default function Home() {
+export default function LoginPage() {
+  const router = useRouter()
+  const { toast } = useToast()
+  const [userType, setUserType] = useState("student")
+  const [username, setUsername] = useState("")
+  const [password, setPassword] = useState("")
+  const [showPassword, setShowPassword] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsLoading(true)
+
+    // Simulate login process
+    setTimeout(() => {
+      setIsLoading(false)
+      if (username && password) {
+        toast({
+          title: "Login Successful",
+          description: `Welcome back, ${username}!`,
+        })
+        router.push("/dashboard")
+      } else {
+        toast({
+          title: "Login Failed",
+          description: "Please enter both username and password.",
+          variant: "destructive",
+        })
+      }
+    }, 1500)
+  }
+
   return (
-    <div className="flex min-h-screen flex-col">
-      <main className="flex-1">
-        <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48 bg-gradient-to-b from-red-50 to-red-100 dark:from-red-950 dark:to-slate-950">
-          <div className="container px-4 md:px-6">
-            <div className="grid gap-6 lg:grid-cols-[1fr_400px] lg:gap-12 xl:grid-cols-[1fr_600px]">
-              <div className="flex flex-col justify-center space-y-4">
-                <div className="flex items-center gap-2 mb-4">
-                  <Image
-                    src="/images/cnsc-logo.png"
-                    alt="Camarines Norte State College Logo - A maroon pentagon with a white circular center containing a yellow triangle with educational symbols"
-                    width={80}
-                    height={80}
-                    className="rounded-full"
-                  />
-                  <h2 className="text-xl font-bold text-maroon-700 dark:text-maroon-300">
-                    Camarines Norte State College
-                  </h2>
-                </div>
-                <div className="space-y-2">
-                  <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none text-maroon-700 dark:text-maroon-300">
-                    Smart Rainwater Harvesting & AI-Powered Filtration System
-                  </h1>
-                  <p className="max-w-[600px] text-gray-600 md:text-xl dark:text-gray-300">
-                    Sustainable water supply solution for Camarines Norte State College (CNSC)
-                  </p>
-                </div>
-                <div className="flex flex-col gap-2 min-[400px]:flex-row">
-                  <Link href="/login" aria-label="Login to the dashboard">
-                    <Button className="bg-maroon-600 hover:bg-maroon-700 focus:ring-2 focus:ring-maroon-500 focus:ring-offset-2">
-                      Login to Dashboard
-                      <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
-                    </Button>
+    <div className="flex min-h-screen flex-col bg-gradient-to-b from-red-50 to-red-100 dark:from-red-950 dark:to-slate-950">
+      <div className="container flex flex-col items-center justify-center px-4 py-12 md:px-6">
+        <Link
+          href="/"
+          className="mb-8 flex items-center text-maroon-600 hover:text-maroon-700 dark:text-maroon-400 dark:hover:text-maroon-300 focus:outline-none focus:ring-2 focus:ring-maroon-500 focus:ring-offset-2 rounded-md"
+          aria-label="Back to home page"
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" aria-hidden="true" />
+          Back to Home
+        </Link>
+        <Card className="w-full max-w-md">
+          <CardHeader className="space-y-1">
+            <div className="flex justify-center mb-4">
+              <Image
+                src="/images/cnsc-logo.png"
+                alt="Camarines Norte State College Logo - A maroon pentagon with a white circular center containing a yellow triangle with educational symbols"
+                width={100}
+                height={100}
+                className="rounded-full"
+              />
+            </div>
+            <CardTitle className="text-center text-2xl font-bold">Sign in</CardTitle>
+            <CardDescription className="text-center">
+              Access the Smart Rainwater Harvesting System Dashboard
+            </CardDescription>
+          </CardHeader>
+          <form onSubmit={handleLogin}>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="user-type" id="user-type-label">
+                  User Type
+                </Label>
+                <RadioGroup
+                  id="user-type"
+                  value={userType}
+                  onValueChange={setUserType}
+                  className="grid grid-cols-2 gap-2"
+                  aria-labelledby="user-type-label"
+                >
+                  <div>
+                    <RadioGroupItem value="administrator" id="administrator" className="peer sr-only" />
+                    <Label
+                      htmlFor="administrator"
+                      className="flex cursor-pointer items-center justify-center rounded-md border-2 border-muted bg-popover p-2 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-maroon-600 peer-data-[state=checked]:text-maroon-600 dark:peer-data-[state=checked]:border-maroon-400 dark:peer-data-[state=checked]:text-maroon-400 focus-within:ring-2 focus-within:ring-maroon-500"
+                    >
+                      Administrator
+                    </Label>
+                  </div>
+                  <div>
+                    <RadioGroupItem value="teacher" id="teacher" className="peer sr-only" />
+                    <Label
+                      htmlFor="teacher"
+                      className="flex cursor-pointer items-center justify-center rounded-md border-2 border-muted bg-popover p-2 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-maroon-600 peer-data-[state=checked]:text-maroon-600 dark:peer-data-[state=checked]:border-maroon-400 dark:peer-data-[state=checked]:text-maroon-400 focus-within:ring-2 focus-within:ring-maroon-500"
+                    >
+                      Teacher
+                    </Label>
+                  </div>
+                  <div>
+                    <RadioGroupItem value="staff" id="staff" className="peer sr-only" />
+                    <Label
+                      htmlFor="staff"
+                      className="flex cursor-pointer items-center justify-center rounded-md border-2 border-muted bg-popover p-2 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-maroon-600 peer-data-[state=checked]:text-maroon-600 dark:peer-data-[state=checked]:border-maroon-400 dark:peer-data-[state=checked]:text-maroon-400 focus-within:ring-2 focus-within:ring-maroon-500"
+                    >
+                      Staff
+                    </Label>
+                  </div>
+                  <div>
+                    <RadioGroupItem value="student" id="student" className="peer sr-only" />
+                    <Label
+                      htmlFor="student"
+                      className="flex cursor-pointer items-center justify-center rounded-md border-2 border-muted bg-popover p-2 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-maroon-600 peer-data-[state=checked]:text-maroon-600 dark:peer-data-[state=checked]:border-maroon-400 dark:peer-data-[state=checked]:text-maroon-400 focus-within:ring-2 focus-within:ring-maroon-500"
+                    >
+                      Student
+                    </Label>
+                  </div>
+                </RadioGroup>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="username">Username</Label>
+                <Input
+                  id="username"
+                  placeholder="Enter your username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  required
+                  aria-required="true"
+                  className="focus:ring-2 focus:ring-maroon-500"
+                />
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="password">Password</Label>
+                  <Link
+                    href="#"
+                    className="text-xs text-maroon-600 hover:text-maroon-700 dark:text-maroon-400 dark:hover:text-maroon-300 focus:outline-none focus:underline"
+                    aria-label="Forgot your password? Click to reset"
+                  >
+                    Forgot password?
                   </Link>
                 </div>
-              </div>
-              <div className="flex items-center justify-center">
-                <div className="relative h-[350px] w-full overflow-hidden rounded-xl bg-white shadow-lg dark:bg-slate-900">
-                  <div
-                    className="absolute inset-0 bg-gradient-to-br from-maroon-400 to-red-500 opacity-20"
-                    aria-hidden="true"
-                  ></div>
-                  <div className="relative flex h-full flex-col items-center justify-center p-6 text-center">
-                    <div className="rounded-full bg-maroon-100 p-4 dark:bg-maroon-900" aria-hidden="true">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="h-10 w-10 text-maroon-600 dark:text-maroon-300"
-                        aria-hidden="true"
-                      >
-                        <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>
-                        <path d="M12 22V2"></path>
-                        <path d="M12 12H2"></path>
-                        <path d="M12 12c0-5.523 4.477-10 10-10"></path>
-                      </svg>
-                    </div>
-                    <h3 className="mt-4 text-xl font-bold text-maroon-700 dark:text-maroon-300">
-                      AI-Powered Water Management
-                    </h3>
-                    <p className="mt-2 text-gray-600 dark:text-gray-300">
-                      Utilizing cutting-edge AI and IoT technologies to ensure sustainable water supply for CNSC
-                    </p>
-                    <div className="mt-6 grid grid-cols-2 gap-4">
-                      <div className="rounded-lg bg-maroon-50 p-3 dark:bg-maroon-900/50">
-                        <p className="text-sm font-medium text-maroon-700 dark:text-maroon-300">Smart Collection</p>
-                      </div>
-                      <div className="rounded-lg bg-maroon-50 p-3 dark:bg-maroon-900/50">
-                        <p className="text-sm font-medium text-maroon-700 dark:text-maroon-300">AI Filtration</p>
-                      </div>
-                      <div className="rounded-lg bg-maroon-50 p-3 dark:bg-maroon-900/50">
-                        <p className="text-sm font-medium text-maroon-700 dark:text-maroon-300">Solar Powered</p>
-                      </div>
-                      <div className="rounded-lg bg-maroon-50 p-3 dark:bg-maroon-900/50">
-                        <p className="text-sm font-medium text-maroon-700 dark:text-maroon-300">Real-time Monitoring</p>
-                      </div>
-                    </div>
-                  </div>
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Enter your password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    aria-required="true"
+                    className="focus:ring-2 focus:ring-maroon-500"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-0 top-0 h-full px-3 py-2 text-muted-foreground hover:text-foreground"
+                    onClick={() => setShowPassword(!showPassword)}
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4" aria-hidden="true" />
+                    ) : (
+                      <Eye className="h-4 w-4" aria-hidden="true" />
+                    )}
+                    <span className="sr-only">{showPassword ? "Hide password" : "Show password"}</span>
+                  </Button>
                 </div>
               </div>
-            </div>
-          </div>
-        </section>
-      </main>
+            </CardContent>
+            <CardFooter>
+              <Button
+                type="submit"
+                className="w-full bg-maroon-600 hover:bg-maroon-700 focus:ring-2 focus:ring-maroon-500 focus:ring-offset-2"
+                disabled={isLoading}
+                aria-label="Sign in to your account"
+              >
+                {isLoading ? "Signing in..." : "Sign In"}
+              </Button>
+            </CardFooter>
+          </form>
+        </Card>
+      </div>
     </div>
   )
 }
